@@ -1,0 +1,19 @@
+Todo -
+
+stage 1: 
+1: Build a web scraper for EPL data
+2: Load ^ data into scikit-learn
+3: Extract features
+4: Explore data
+5: Build prelim models
+7: evaluate prelim models
+6: Deploy prelim models
+
+stage 2:
+1: Evaluate deployed models
+2: Rebuild modes base on production results
+3: Redeploy
+
+stage 3:
+1: repeat stage 2 - many..many times
+
