@@ -1,2 +1,6 @@
 argparse==1.2.1
 wsgiref==0.1.2
+
+scikit-learn: see http://scikit-learn.org/stable/install.html os dependent instructions
+
+on Ubuntu\Debian - run sudo apt-get install python-sklearn 
