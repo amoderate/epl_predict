@@ -32,6 +32,7 @@ for row in rows:
 		home_reg = home_reg.replace('Tottenham Hotspur', 'Tottenham')
 		home_reg = home_reg.replace('Swansea City', 'Swansea')
 		home_reg = home_reg.replace('Stoke City', 'Stoke')
+		home_reg = home_reg.replace('Hull City', 'Hull')
 		away = cells[2].find(text=True).string.strip()
 		away_reg = away.replace('Manchester', 'Man')
 		away_reg = away_reg.replace('Newcastle United', 'Newcastle')
@@ -41,6 +42,7 @@ for row in rows:
 		away_reg = away_reg.replace('Tottenham Hotspur', 'Tottenham')
 		away_reg = away_reg.replace('Swansea City', 'Swansea')
 		away_reg = away_reg.replace('Stoke City', 'Stoke')
+		away_reg = away_reg.replace('Hull City', 'Hull')
 
 		aux = [date.lstrip('\n'), home_reg.lstrip('\n'), away_reg.lstrip('\n')]
 		epl_fixtures.append(aux)

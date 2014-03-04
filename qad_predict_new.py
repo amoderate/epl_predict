@@ -61,9 +61,14 @@ for i in range(len(score_list)):
 	aux_list = []
 	aux_list.extend(features[i][1:4])
 	aux_list.extend(score[i])
+	if score[i][0] >= .5:
+		color = ["#A1A1A1"]
+	elif score[i][0] < .5:
+		color = ["#262626"]
+	aux_list.extend(color)
 	scores_and_features.append(aux_list)
 
-header = ['date', 'home_team', 'away_team', 'predict_home', 'predict_away']
+header = ['date', 'home_team', 'away_team', 'predict_home', 'predict_away', 'color']
 
 c = csv.writer(open('mining_data/scored_matches.csv', 'wb'))
 
