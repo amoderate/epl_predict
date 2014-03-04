@@ -53,7 +53,7 @@ def main():
 	for year in list_of_years:
 		f = open('processed_data/processed_epl_data_'+year+'.csv')
 		t = open('processed_data/processed_epl_data_'+year+'_target.csv')
-	
+		
 		features = csv.reader(f)
 
 
@@ -70,40 +70,89 @@ def main():
 
 		data = pd.read_csv('processed_data/processed_epl_data_'+year+'.csv', parse_dates=['Date'], dayfirst=True, keep_date_col = True)
 		target = pd.read_csv('processed_data/processed_epl_data_'+year+'_target.csv', parse_dates=['Date'], dayfirst=True, keep_date_col = True)
+		
+		#merge on the  2013/2014 fixture list
+		if year == list_of_years[0]:
+			fixtures = pd.read_csv('processed_data/fixtures.csv', parse_dates=['Date'], dayfirst=True, keep_date_col = True)
+			fixtures_cut = fixtures[fixtures.Date  > '2014-03-02']
+			
+
+			data_3 = pd.merge(data, fixtures_cut, on=['Date', 'HomeTeam', 'AwayTeam'], how='outer')
+
+			print len(fixtures_cut), len(data), len(data_3)
+
+			#print data_3
+
+			target_3 = pd.merge(target, fixtures_cut, on=['Date', 'HomeTeam'], how='outer')
+			del target_3['AwayTeam']
+		else:
+			data_3 = data
+			target_3 = target
+
+		
+		
+
+		#combined_3_filled = data_3.fillna(data_3.mean())
 
 
+		
+		
 		teams_h = data['HomeTeam'].unique()
 		teams_a = data['AwayTeam'].unique()
+
 		if row_num == 0:
-			data_1 = combine_data(data, target, teams_h, teams_a, refined_features)
+			data_1 = combine_data(data_3, target_3, teams_h, teams_a, refined_features)
 		else:
-			data_2 = combine_data(data, target, teams_h, teams_a, refined_features)
+			data_2 = combine_data(data_3, target_3, teams_h, teams_a, refined_features)
 
 			data_1 = data_1.append(data_2, ignore_index = True)
 
 
 		row_num += 1
+	
+	
+
+	#print combined_3_filled.sort(ascending = False)
+
 	data_2 = data_1[data_1['FTR'] != 0]
-	train = data_2
-	target = data_2[['FTR']]
+	data_train = data_2[data_2.Date < '2014-03-02']
 
+	#split out data to be scores from training data
+	score_data_s1 = data_2[data_2.Date > '2014-03-02']
+	score_data = score_data_s1.fillna(score_data_s1.mean())
 
+	#training data
+	train = data_train
+	target = data_train[['FTR']]
 
-	full_feature= train
+	
+	score_data_sorted = score_data.sort(columns='Date')
+	score_data_sorted.to_csv('mining_data/score_data.csv')
 
-	full_feature.to_csv('mining_data/full_feature.csv')
-	print full_feature
+	#print train.sort(ascending=False)
+
+	train.to_csv('mining_data/full_feature.csv')
+	#print full_feature
 	
 	del train['HomeTeam']
 	del train['FTR']
 	del train['Date']
 	del train['AwayTeam']
 
+	del score_data['HomeTeam']
+	del score_data['FTR']
+	del score_data['Date']
+	del score_data['AwayTeam']
+
 	
+	score_data.to_csv('mining_data/score_train.csv')
 
 	train.to_csv('mining_data/train.csv')
 
 	target.to_csv('mining_data/target.csv')
+
+	print score_data
+
 
 
 
