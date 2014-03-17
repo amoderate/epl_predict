@@ -1,6 +1,7 @@
 #import numpy as np
 import csv
 import pandas as pd
+import numpy as np
 
 
 
@@ -11,14 +12,17 @@ def iter_over_groups(data, group,features, key):
 		if row_num == 0:
 			data_1 = data[data[key]==x]
 			for i in features:
+
 				data_1['avg_10' + i.lower() + '_'+ key[0].lower()] = pd.rolling_mean(data_1[i], 10).shift(+1)
 				data_1['avg_3' + i.lower() + '_'+ key[0].lower()] = pd.rolling_mean(data_1[i], 3).shift(+1)
+				data_1['expand' + i.lower() + '_'+ key[0].lower()] = pd.expanding_mean(data_1[i]).shift(+1)
 
 		else:
 			data_2 = data[data[key]==x]
 			for i in features:
 				data_2['avg_10' + i.lower() + '_' + key[0].lower()] = pd.rolling_mean(data_2[i], 10).shift(+1)
 				data_2['avg_3' + i.lower() + '_' + key[0].lower()] = pd.rolling_mean(data_2[i], 3).shift(+1)
+				data_2['expand' + i.lower() + '_'+ key[0].lower()] = pd.expanding_mean(data_1[i]).shift(+1)
 
 
 			data_1 = data_1.append(data_2, ignore_index = True)
@@ -74,7 +78,7 @@ def main():
 		#merge on the  2013/2014 fixture list
 		if year == list_of_years[0]:
 			fixtures = pd.read_csv('processed_data/fixtures.csv', parse_dates=['Date'], dayfirst=True, keep_date_col = True)
-			fixtures_cut = fixtures[fixtures.Date  > '2014-03-02']
+			fixtures_cut = fixtures[fixtures.Date  > '2014-01-01']
 			
 
 			data_3 = pd.merge(data, fixtures_cut, on=['Date', 'HomeTeam', 'AwayTeam'], how='outer')
@@ -114,18 +118,56 @@ def main():
 
 	#print combined_3_filled.sort(ascending = False)
 
+	#P W @ H : 1899 / (1899 + 1115)  = .63
+	#P L @ H : 1 - .63 = .37
+
 	data_2 = data_1[data_1['FTR'] != 0]
-	data_train = data_2[data_2.Date < '2014-03-02']
+
+	
+	def goals(row):
+
+
+		if row['expandfthg_h'] - row['expandftag_a'] <= 0:
+			val = 0
+		if row['expandfthg_h'] - row['expandftag_a'] > 0  and row['expandfthg_h'] - row['expandftag_a'] < .2:
+			val = 1
+		elif row['expandfthg_h'] - row['expandftag_a'] >= .2 and row['expandfthg_h'] - row['expandftag_a'] < .3:
+			val = 2
+		elif row['expandfthg_h'] - row['expandftag_a'] >= .3 and row['expandfthg_h'] - row['expandftag_a'] < .4:
+			val = 3
+		elif row['expandfthg_h'] - row['expandftag_a'] >= .4 and row['expandfthg_h'] - row['expandftag_a'] < .5:
+			val = 4
+		elif row['expandfthg_h'] - row['expandftag_a'] >= .5 and row['expandfthg_h'] - row['expandftag_a'] < .6:
+			val = 5
+		elif row['expandfthg_h'] - row['expandftag_a'] >= .6 and row['expandfthg_h'] - row['expandftag_a'] < .7:
+			val = 6
+		elif row['expandfthg_h'] - row['expandftag_a'] >= .7:
+			val = 7
+		
+
+
+		return val
+
+	data_2['goals_compare'] = data_2.apply(goals, axis=1)
+
+	
+
+	#explore_bays = data_2.groupby(['FTR', 'goals_compare']).agg({'expandfthg_h': np.mean, 'expandftag_a' : np.mean, 'expandhst_h' : np.mean, 'expandast_a' : np.mean, 'HomeTeam' : np.size})
+
+	#print explore_bays
+	
+	data_train = data_2[data_2.Date <= '2014-01-01']
 
 	#split out data to be scores from training data
-	score_data_s1 = data_2[data_2.Date > '2014-03-02']
-	score_data = score_data_s1.fillna(score_data_s1.mean())
+	score_data_s1 = data_2[data_2.Date > '2014-01-01']
+	score_data = score_data_s1.fillna(0)
 
 	#training data
 	train = data_train
 	target = data_train[['FTR']]
 
 	
+
 	score_data_sorted = score_data.sort(columns='Date')
 	score_data_sorted.to_csv('mining_data/score_data.csv')
 
@@ -139,19 +181,19 @@ def main():
 	del train['Date']
 	del train['AwayTeam']
 
-	del score_data['HomeTeam']
-	del score_data['FTR']
-	del score_data['Date']
-	del score_data['AwayTeam']
+	del score_data_sorted['HomeTeam']
+	del score_data_sorted['FTR']
+	del score_data_sorted['Date']
+	del score_data_sorted['AwayTeam']
 
 	
-	score_data.to_csv('mining_data/score_train.csv')
+	score_data_sorted.to_csv('mining_data/score_train.csv')
 
 	train.to_csv('mining_data/train.csv')
 
 	target.to_csv('mining_data/target.csv')
 
-	print score_data
+	#print score_data_sorted
 
 
 
