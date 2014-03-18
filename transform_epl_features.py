@@ -78,7 +78,7 @@ def main():
 		#merge on the  2013/2014 fixture list
 		if year == list_of_years[0]:
 			fixtures = pd.read_csv('processed_data/fixtures.csv', parse_dates=['Date'], dayfirst=True, keep_date_col = True)
-			fixtures_cut = fixtures[fixtures.Date  > '2014-01-01']
+			fixtures_cut = fixtures[fixtures.Date  > '2014-03-01']
 			
 
 			data_3 = pd.merge(data, fixtures_cut, on=['Date', 'HomeTeam', 'AwayTeam'], how='outer')
@@ -126,29 +126,60 @@ def main():
 	
 	def goals(row):
 
-
-		if row['expandfthg_h'] - row['expandftag_a'] <= 0:
-			val = 0
-		if row['expandfthg_h'] - row['expandftag_a'] > 0  and row['expandfthg_h'] - row['expandftag_a'] < .2:
+		val = 0
+		if abs(row['expandfthg_h'] - row['expandftag_a']) > 0  and abs(row['expandfthg_h'] - row['expandftag_a']) < .2:
 			val = 1
-		elif row['expandfthg_h'] - row['expandftag_a'] >= .2 and row['expandfthg_h'] - row['expandftag_a'] < .3:
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= .2 and abs(row['expandfthg_h'] - row['expandftag_a']) < .3:
 			val = 2
-		elif row['expandfthg_h'] - row['expandftag_a'] >= .3 and row['expandfthg_h'] - row['expandftag_a'] < .4:
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= .3 and abs(row['expandfthg_h'] - row['expandftag_a']) < .4:
 			val = 3
-		elif row['expandfthg_h'] - row['expandftag_a'] >= .4 and row['expandfthg_h'] - row['expandftag_a'] < .5:
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= .4 and abs(row['expandfthg_h'] - row['expandftag_a']) < .5:
 			val = 4
-		elif row['expandfthg_h'] - row['expandftag_a'] >= .5 and row['expandfthg_h'] - row['expandftag_a'] < .6:
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= .5 and abs(row['expandfthg_h'] - row['expandftag_a']) < .6:
 			val = 5
-		elif row['expandfthg_h'] - row['expandftag_a'] >= .6 and row['expandfthg_h'] - row['expandftag_a'] < .7:
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= .6 and abs(row['expandfthg_h'] - row['expandftag_a']) < .7:
 			val = 6
-		elif row['expandfthg_h'] - row['expandftag_a'] >= .7:
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= .7 and abs(row['expandfthg_h'] - row['expandftag_a']) < .8:
 			val = 7
-		
-
-
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= .8 and abs(row['expandfthg_h'] - row['expandftag_a']) < .9:
+			val = 8
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= .9 and abs(row['expandfthg_h'] - row['expandftag_a']) < .10:
+			val = 9
+		elif abs(row['expandfthg_h'] - row['expandftag_a']) >= 1.0:
+			val = 10
+	
 		return val
 
+	def exp_goals_dif(row):
+		return abs(row['expandfthg_h'] - row['expandftag_a'])
+
+	def exp_away_goals_dif(row):
+		return abs(row['expandftag_h'] - row['expandftag_a'])
+
+	def exp_home_goals_dif(row):
+		return abs(row['expandfthg_h'] - row['expandftag_h'])
+	
+	def avg3_goals_dif(row):
+		return abs(row['avg_3fthg_h'] - row['avg_3ftag_a'])
+
+	def avg3_away_goals_dif(row):
+		return abs(row['avg_3ftag_h'] - row['avg_3ftag_a'])
+
+	def avg3_home_goals_dif(row):
+		return abs(row['avg_3fthg_h'] - row['avg_3ftag_h'])
+
+
 	data_2['goals_compare'] = data_2.apply(goals, axis=1)
+	data_2['goals_dif'] = data_2.apply(exp_goals_dif, axis=1)
+	data_2['away_goals_dif'] = data_2.apply(exp_away_goals_dif, axis=1)
+	data_2['home_goals_dif'] = data_2.apply(exp_home_goals_dif, axis=1)
+	
+	data_2['avg3_goals_compare'] = data_2.apply(avg3_goals_dif, axis=1)
+
+	data_2['avg3_away_goals_compare'] = data_2.apply(avg3_away_goals_dif, axis=1)
+
+	data_2['avg3_home_goals_compare'] = data_2.apply(avg3_home_goals_dif, axis=1)
+
 
 	
 
@@ -156,10 +187,10 @@ def main():
 
 	#print explore_bays
 	
-	data_train = data_2[data_2.Date <= '2014-01-01']
+	data_train = data_2[data_2.Date <= '2014-03-01']
 
 	#split out data to be scores from training data
-	score_data_s1 = data_2[data_2.Date > '2014-01-01']
+	score_data_s1 = data_2[data_2.Date > '2014-03-01']
 	score_data = score_data_s1.fillna(0)
 
 	#training data

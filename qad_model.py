@@ -2,7 +2,7 @@ import pickle
 import numpy as np
 from sklearn import cross_validation
 from sklearn import preprocessing
-from sklearn import svm, datasets
+from sklearn import svm, datasets, linear_model
 from sklearn.utils import shuffle
 
 #load data and transform (must mach the transform done in pre-processing, 
@@ -34,10 +34,10 @@ X_new = clf.transform(X)
 #Create train/test data sets
 X_train, X_test, y_train, y_test = cross_validation.train_test_split(
 	X_new, y, test_size=0.3, random_state=0)
-
 #build a simple svm model (takes about an hour to train on 3k recrods and 13 features)
 #note - buy a faster computer, or rent some ec2 processing time if dealing with more data
-svmm = svm.SVC(kernel='linear', probability=True, random_state=0)
+#svmm = svm.SVC(kernel='rbf', probability=True, random_state=0)
+svmm = linear_model.LogisticRegression(C = 0.05)
 svmm.fit(X_train, y_train)
 
 
