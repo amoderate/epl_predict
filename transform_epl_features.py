@@ -78,7 +78,7 @@ def main():
 		#merge on the  2013/2014 fixture list
 		if year == list_of_years[0]:
 			fixtures = pd.read_csv('processed_data/fixtures.csv', parse_dates=['Date'], dayfirst=True, keep_date_col = True)
-			fixtures_cut = fixtures[fixtures.Date  > '2014-03-01']
+			fixtures_cut = fixtures[fixtures.Date  > '2014-03-24']
 			
 
 			data_3 = pd.merge(data, fixtures_cut, on=['Date', 'HomeTeam', 'AwayTeam'], how='outer')
@@ -187,10 +187,10 @@ def main():
 
 	#print explore_bays
 	
-	data_train = data_2[data_2.Date <= '2014-03-01']
+	data_train = data_2[data_2.Date <= '2014-03-24']
 
 	#split out data to be scores from training data
-	score_data_s1 = data_2[data_2.Date > '2014-03-01']
+	score_data_s1 = data_2[data_2.Date > '2014-03-24']
 	score_data = score_data_s1.fillna(0)
 
 	#training data
