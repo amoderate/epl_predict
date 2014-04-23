@@ -3,6 +3,7 @@ import numpy as np
 from sklearn import cross_validation
 from sklearn import preprocessing
 from sklearn import svm, datasets, linear_model
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.utils import shuffle
 
 #load data and transform (must mach the transform done in pre-processing, 
@@ -18,15 +19,16 @@ target = np.loadtxt(t, delimiter=',')
 
 
 X = data
-X_scaled = preprocessing.scale(X)
+
+X_scaled = X
 
 y = target[:, 1:].ravel()
 
-# c = open('ica_s1.txt','rb')
+c = open('ica_s1.txt','rb')
 
-# ica= pickle.load(c)
+ica= pickle.load(c)
 
-# X_ica = ica.transform(X_scaled)
+#X_new = ica.transform(X_scaled)
 
 # c1 = open('ica_s2.txt', 'rb')
 
@@ -51,7 +53,7 @@ X_train, X_test, y_train, y_test = cross_validation.train_test_split(
 #build a simple svm model (takes about an hour to train on 3k recrods and 13 features)
 #note - buy a faster computer, or rent some ec2 processing time if dealing with more data
 #svmm = svm.SVC(kernel='rbf', probability=True, random_state=0)
-svmm = linear_model.LogisticRegression(C = 0.03)
+svmm = linear_model.LogisticRegression(C=.9)
 svmm.fit(X_train, y_train)
 
 

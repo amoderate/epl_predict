@@ -33,11 +33,17 @@ data = np.loadtxt(f, delimiter=',')
 
 
 X = data
-X_scaled = preprocessing.scale(X)
+X_scaled = X
 
 
 
 #first load the preprocessing model
+
+c = open('ica_s1.txt','rb')
+
+ica= pickle.load(c)
+
+#X_new = ica.transform(X_scaled)
 
 d = open('dimension_reduction.txt', 'rb')
 clf = pickle.load(d)
@@ -75,3 +81,4 @@ c = csv.writer(open('mining_data/scored_matches.csv', 'wb'))
 c.writerow(header)
 for row in scores_and_features:
 	c.writerow(row)
+	print row

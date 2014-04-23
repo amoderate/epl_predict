@@ -20,21 +20,21 @@ target = np.loadtxt(t, delimiter=',')
 #print data
 
 X = data
-X_scaled = preprocessing.scale(X)
+X_scaled = X
 
 
 #transform the target as necessary
 y = target[:, 1:].ravel()
 
 
-# ica = FastICA(random_state = rng)
+ica = FastICA(random_state = rng)
 
-# ica.fit(X_scaled)
-# X_ica = ica.transform(X_scaled)
+ica.fit(X_scaled)
+X_new = ica.transform(X_scaled)
 
-# c1 = open('ica_s1.txt', 'wb')
+c1 = open('ica_s1.txt', 'wb')
 
-# pickle.dump(ica, c1)
+pickle.dump(ica, c1)
 
 # ica_1 = FastICA(random_state = rng)
 # ica_1.fit(X_ica)	
@@ -53,7 +53,7 @@ y = target[:, 1:].ravel()
 
 
 #use a simple tree classifire to identify important features
-clf = ExtraTreesClassifier(min_samples_leaf = 10)
+clf = ExtraTreesClassifier()
 clf.fit(X_scaled, y)
 
 X_new = clf.transform(X_scaled)

@@ -8,7 +8,7 @@ import csv
 
 import pandas as pd
 
-#score new data - first load and transform...seriosly, don't be lazy, make this shit a class already 
+#score new data - first load and transform...seriosly, don't be lazy, make this a class already 
 
 f = open('mining_data/train.csv')
 t = open('mining_data/target.csv')
@@ -35,7 +35,7 @@ target = np.loadtxt(t, delimiter=',')
 
 
 X = data
-X_scaled = preprocessing.scale(X)
+X_scaled = X
 
 y = target[:, 1:].ravel()
 
@@ -46,7 +46,7 @@ d = open('dimension_reduction.txt', 'rb')
 clf = pickle.load(d)
 
 #Transform the feature vectos
-X_new = clf.transform(X)
+X_new = clf.transform(X_scaled)
 
 #load the qad model
 

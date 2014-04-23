@@ -9,6 +9,8 @@ def replace_value(value):
 		aux = 1
 	elif value == 'A':
 		aux = 2
+	elif value == 'D':
+		aux = 0
 	return str(aux)
 #Open dataset
 
@@ -33,6 +35,7 @@ def extract_epl_features(data, year):
 				#header.append(row)
 				header_list.extend(row[1:4])
 				header_list.extend(row[4:6])
+				header_list.extend(row[6:7])
 				header_list.extend(row[7:9])
 				header_list.extend(row[10:18])
 				header.append(header_list)
@@ -43,6 +46,7 @@ def extract_epl_features(data, year):
 			else:
 				row_list.extend(row[1:4])
 				row_list.extend(row[4:6])
+				row_list.extend(replace_value(row[6:7][0]))
 				row_list.extend(row[7:9])
 				row_list.extend(row[10:18])
 				data_list.append(row_list)
@@ -62,6 +66,7 @@ def extract_epl_features(data, year):
 				#header.append(row)
 				header_list.extend(row[1:4])
 				header_list.extend(row[4:6])
+				header_list.extend(row[6:7])
 				header_list.extend(row[7:9])
 				header_list.extend(row[11:19])
 				header.append(header_list)
@@ -69,10 +74,10 @@ def extract_epl_features(data, year):
 				target_header_list.extend(row[1:3])
 				target_header_list.extend(row[6:7])
 				target_header.append(target_header_list)
-					
 			else:
 				row_list.extend(row[1:4])
 				row_list.extend(row[4:6])
+				row_list.extend(replace_value(row[6:7][0]))
 				row_list.extend(row[7:9])
 				row_list.extend(row[11:19])
 				data_list.append(row_list)
@@ -83,7 +88,7 @@ def extract_epl_features(data, year):
 
 			row_num += 1
 
-	#print [(number, item) for (number, item) in enumerate(header[0])]
+	print [(number, item) for (number, item) in enumerate(header[0])]
 	return header, data_list, target_header, target_list
 
 
